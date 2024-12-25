@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root {
+      --sky-color: #1a1a2e;
+      --road-color: #16213e;
+      --grass-color: #0f3460;
+      --mountain-color: #1f3a5f;
+      --car-color: #e94560;
+      --wheel-color: #533483;
+      --cloud-color: rgba(255, 255, 255, 0.3);
+    }
+
+    body,
+    html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+      background: var(--sky-color);
+    }
+
+    .loading-container {
+      width: 100vw;
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
+      overflow: hidden;
+      background: var(--sky-color);
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .sky {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 70%;
+      background: linear-gradient(to bottom, var(--sky-color), #2a2a4e);
+      transition: background 5s;
+      animation: dayNightCycle 20s infinite;
+    }
+
+    .stars {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      animation: twinkle 2s infinite alternate;
+    }
+
+    .stars::before,
+    .stars::after {
+      content: '✦';
+      position: absolute;
+      color: white;
+      font-size: 10px;
+    }
+
+    .stars::before {
+      top: 20%;
+      left: 40%;
+    }
+
+    .stars::after {
+      top: 30%;
+      right: 30%;
+    }
+
+    .moon,
+    .sun {
+      position: absolute;
+      top: 30px;
+      left: 30px;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      transition: transform 5s, opacity 5s;
+    }
+
+    .moon {
+      background: #D0D0D0;
+      box-shadow: 0 0 20px #D0D0D0;
+      opacity: 1;
+      animation: moonCycle 20s infinite;
+    }
+
+    .sun {
+      background: #FFD700;
+      box-shadow: 0 0 30px #FFD700;
+      opacity: 0;
+      animation: sunCycle 20s infinite;
+    }
+
+    .clouds {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 100px;
+    }
+
+    .cloud {
+      position: absolute;
+      background: var(--cloud-color);
+      border-radius: 50%;
+      animation: float 20s linear infinite;
+    }
+
+    .cloud1 {
+      width: 100px;
+      height: 40px;
+      top: 20px;
+    }
+
+    .cloud2 {
+      width: 60px;
+      height: 30px;
+      top: 50px;
+      animation-delay: -5s;
+    }
+
+    .cloud3 {
+      width: 80px;
+      height: 35px;
+      top: 30px;
+      animation-delay: -10s;
+    }
+
+    .mountains {
+      position: absolute;
+      bottom: 40%;
+      width: 100%;
+    }
+
+    .mountain {
+      position: absolute;
+      border-left: 50px solid transparent;
+      border-right: 50px solid transparent;
+      border-bottom: 100px solid var(--mountain-color);
+    }
+
+    .mountain1 {
+      left: -20px;
+    }
+
+    .mountain2 {
+      left: 30%;
+      bottom: -20px;
+      transform: scale(0.8);
+    }
+
+    .mountain3 {
+      right: -20px;
+      transform: scale(1.2);
+    }
+
+    .road {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      height: 30%;
+      background-color: var(--road-color);
+    }
+
+    .line {
+      position: absolute;
+      top: 50%;
+      width: 100%;
+      height: 4px;
+      background-color: rgba(255, 255, 255, 0.5);
+      animation: moveLine 0.5s linear infinite;
+    }
+
+    .car {
+      position: absolute;
+      bottom: 10%;
+      left: 10%;
+      animation: bounce 0.5s ease-in-out infinite alternate;
+    }
+
+    .car-body {
+      width: 60px;
+      height: 25px;
+      background: var(--car-color);
+      border-radius: 10px 20px 0 0;
+      position: relative;
+    }
+
+    .car-body::before {
+      content: '';
+      position: absolute;
+      top: -10px;
+      right: 5px;
+      width: 30px;
+      height: 15px;
+      background: var(--car-color);
+      border-radius: 10px 10px 0 0;
+    }
+
+    .wheel {
+      width: 15px;
+      height: 15px;
+      background: var(--wheel-color);
+      border-radius: 50%;
+      position: absolute;
+      bottom: -7px;
+      animation: rotate 0.5s linear infinite;
+    }
+
+    .wheel1 {
+      left: 10px;
+    }
+
+    .wheel2 {
+      right: 10px;
+    }
+
+    .trees {
+      position: absolute;
+      bottom: 10%;
+      width: 100%;
+    }
+
+    .tree {
+      position: absolute;
+      width: 0;
+      height: 0;
+      border-left: 15px solid transparent;
+      border-right: 15px solid transparent;
+      border-bottom: 50px solid var(--grass-color);
+      animation: pass 6s linear infinite;
+    }
+
+    .tree1 {
+      right: -50px;
+      animation-delay: 0s;
+    }
+
+    .tree2 {
+      right: -50px;
+      animation-delay: 2s;
+    }
+
+    .tree3 {
+      right: -50px;
+      animation-delay: 4s;
+    }
+
+    .birds {
+      position: absolute;
+      top: 10%;
+      width: 100%;
+    }
+
+    .bird {
+      position: absolute;
+      font-size: 20px;
+      animation: fly 10s linear infinite;
+    }
+
+    .bird1 {
+      top: 20px;
+      left: 5%;
+      animation-delay: 0s;
+    }
+
+    .bird2 {
+      top: 50px;
+      left: 25%;
+      animation-delay: -5s;
+    }
+
+    .bird3 {
+      top: 80px;
+      left: 45%;
+      animation-delay: -3s;
+    }
+
+    .bird4 {
+      top: 30px;
+      left: 65%;
+      animation-delay: -7s;
+    }
+
+    .bird5 {
+      top: 60px;
+      left: 85%;
+      animation-delay: -10s;
+    }
+
+    .loading-text {
+      position: absolute;
+      bottom: 5%;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Arial', sans-serif;
+      font-size: 24px;
+      color: #fff;
+    }
+
+    .loading-text span {
+      display: inline-block;
+      animation: bounce 0.3s ease infinite alternate;
+      animation-delay: calc(0.1s * var(--i));
+    }
+
+    @keyframes twinkle {
+      0% {
+        opacity: 0.3;
+      }
+
+      100% {
+        opacity: 1;
+      }
+    }
+
+    @keyframes float {
+      from {
+        transform: translateX(100%);
+      }
+
+      to {
+        transform: translateX(-100%);
+      }
+    }
+
+    @keyframes bounce {
+      from {
+        transform: translateY(0);
+      }
+
+      to {
+        transform: translateY(-5px);
+      }
+    }
+
+    @keyframes rotate {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes pass {
+      from {
+        transform: translateX(120%);
+      }
+
+      to {
+        transform: translateX(-120%);
+      }
+    }
+
+    @keyframes fly {
+      from {
+        transform: translateX(-100%) translateY(0);
+      }
+
+      50% {
+        transform: translateX(50%) translateY(-20px);
+      }
+
+      to {
+        transform: translateX(200%) translateY(0);
+      }
+    }
+
+    /* Day-Night Cycle */
+    @keyframes dayNightCycle {
+
+      0%,
+      100% {
+        background: var(--sky-color);
+      }
+
+      50% {
+        background: #87CEEB;
+      }
+    }
+
+    @keyframes moonCycle {
+
+      0%,
+      100% {
+        transform: translateY(0);
+        opacity: 1;
+      }
+
+      50% {
+        transform: translateY(100px);
+        opacity: 0;
+      }
+    }
+
+    @keyframes sunCycle {
+
+      0%,
+      100% {
+        transform: translateY(100px);
+        opacity: 0;
+      }
+
+      50% {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .car {
+        transform: scale(0.8);
+      }
+
+      .loading-text {
+        font-size: 20px;
+      }
+
+      .moon,
+      .sun {
+        width: 40px;
+        height: 40px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .car {
+        transform: scale(0.6);
+      }
+
+      .loading-text {
+        font-size: 18px;
+      }
+
+      .moon,
+      .sun {
+        width: 30px;
+        height: 30px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="loading-container">
+    <div class="sky">
+      <div class="stars"></div>
+      <div class="moon"></div>
+      <div class="sun"></div>
+    </div>
+    <div class="clouds">
+      <div class="cloud cloud1"></div>
+      <div class="cloud cloud2"></div>
+      <div class="cloud cloud3"></div>
+    </div>
+    <div class="mountains">
+      <div class="mountain mountain1"></div>
+      <div class="mountain mountain2"></div>
+      <div class="mountain mountain3"></div>
+    </div>
+    <div class="road">
+      <div class="line"></div>
+    </div>
+    <div class="car">
+      <div class="car-body">
+        <div class="wheel wheel1"></div>
+        <div class="wheel wheel2"></div>
+      </div>
+    </div>
+    <div class="trees">
+      <div class="tree tree1"></div>
+      <div class="tree tree2"></div>
+      <div class="tree tree3"></div>
+    </div>
+    <div class="birds">
+      <div class="bird bird1">🐦</div>
+      <div class="bird bird2">🐦</div>
+      <div class="bird bird3">🐦</div>
+      <div class="bird bird4">🐦</div>
+      <div class="bird bird5">🐦</div>
+    </div>
+    <div class="loading-text">
+      <!-- <span style="--i:1;"></span><span style="--i:2;">i</span><span style="--i:3;">c</span><span
+        style="--i:4;">e</span><span style="--i:5;">n</span><span style="--i:6;">s</span><span
+        style="--i:7;">e</span><span style="--i:8;">.</span><span style="--i:9;">.</span><span style="--i:10;">.</span> -->
+    </div>
+  </div>
+</body>
+
+</html>
